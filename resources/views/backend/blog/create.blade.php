@@ -1,7 +1,7 @@
 @extends('backend.app')
 @section('content')
     <div class="pagetitle">
-      <h1>Blank Page</h1>
+      <h1>Blog Page</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -13,63 +13,93 @@
     
     <section class="section">
       <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-12">
 
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Horizontal Form</h5>
+              <h5 class="card-title">Blog Post</h5>
 
               <!-- Horizontal Form -->
-              <form>
-                <div class="col-12">
-                  <label for="inputNanme4" class="form-label">Your Name</label>
-                  <input type="text" class="form-control" id="inputNanme4">
-                </div>
-                <div class="col-md-12">
-                  <label for="inputNanme4" class="form-label">Your Name</label>
-                  <select id="inputState" class="form-select">
-                    <option selected>Choose...</option>
-                    <option>...</option>
+              <form action="{{route('admin.blog.store')}}" method="post" enctype="multipart/form-data">
+                @csrf
+                <div class="col-md-12 mt-5">
+                  <label for="inputNanme4" class="form-label"><b> Category <i class="text-danger">*</i> </b></label>
+                  <select class="form-select" name="category">
+                    <option value="">Choose...</option>
+                    @foreach($categories as $category)
+                    <option value="{{$category->id}}">{{$category->name}}</option>
+                    @endforeach
                   </select>
+                      @error('category')
+                        <span class="text-danger" role="alert">
+                          <strong>{{ $message }}</strong>
+                        </span>
+                      @enderror
                 </div>
-                <div class="row mb-3">
-                  <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
-                  <div class="col-sm-10">
-                    <textarea id="summernote"></textarea>
+
+                <div class="col-12">
+                  <label for="inputNanme4" class="form-label"><b>Title <i class="text-danger">*</i></b></label>
+                  <input type="text" class="form-control" name="title" value="{{old('title')}}">
+                      @error('title')
+                        <span class="text-danger" role="alert">
+                          <strong>{{ $message }}</strong>
+                        </span>
+                      @enderror
+                </div>                
+
+                <div class="col-12">
+                  <label for="inputNanme4" class="form-label"><b>Slug <i class="text-danger">*</i></b></label>
+                  <input type="text" class="form-control" name="slug" value="{{old('slug')}}">
+                      @error('slug')
+                        <span class="text-danger" role="alert">
+                          <strong>{{ $message }}</strong>
+                        </span>
+                      @enderror
+                </div>
+                <div class="col-12 mt-5">
+                  <label for="inputNanme4" class="form-label"><b>Excerpt <i class="text-danger">*</i></b></label>
+                  <textarea class="form-control" name="excerpt">{{old('excerpt')}}</textarea>
+                      @error('excerpt')
+                        <span class="text-danger" role="alert">
+                          <strong>{{ $message }}</strong>
+                        </span>
+                      @enderror
+                </div> 
+                <div class="col-md-12 mt-5">
+                  <label for="inputNanme4" class="form-label"><b>Description <i class="text-danger">*</i></b></label>
+                  <div class="col-sm-12">
+                    <textarea id="summernote" name="description">{{old('description')}}</textarea>
+                      @error('description')
+                        <span class="text-danger" role="alert">
+                          <strong>{{ $message }}</strong>
+                        </span>
+                      @enderror
                   </div>
                 </div>
-                <fieldset class="row mb-3">
-                  <legend class="col-form-label col-sm-2 pt-0">Radios</legend>
-                  <div class="col-sm-10">
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
-                      <label class="form-check-label" for="gridRadios1">
-                        First radio
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
-                      <label class="form-check-label" for="gridRadios2">
-                        Second radio
-                      </label>
-                    </div>
-                    <div class="form-check disabled">
-                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3" disabled>
-                      <label class="form-check-label" for="gridRadios3">
-                        Third disabled radio
-                      </label>
-                    </div>
-                  </div>
-                </fieldset>
-                <div class="row mb-3">
-                  <div class="col-sm-10 offset-sm-2">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="gridCheck1">
-                      <label class="form-check-label" for="gridCheck1">
-                        Example checkbox
-                      </label>
-                    </div>
-                  </div>
+                <div class="col-md-12 mt-5">
+                  <label for="inputNanme4" class="form-label"><b>Image <i class="text-danger">*</i></b></label>
+                  <input type="file" class="form-control" name="image">
+                      @error('image')
+                        <span class="text-danger" role="alert">
+                          <strong>{{ $message }}</strong>
+                        </span>
+                      @enderror
+                </div>
+
+                @include('backend.components.seo-create')
+
+                <div class="col-md-12 mt-5 mb-5">
+                  <label for="inputNanme4" class="form-label"><b>Status <i class="text-danger">*</i></b></label>
+                  <select class="form-select" name="status">
+                    <option value="">Choose...</option>
+                    <option value="1">Publish</option>
+                    <option value="0">Draft</option>
+                  </select>
+                      @error('status')
+                        <span class="text-danger" role="alert">
+                          <strong>{{ $message }}</strong>
+                        </span>
+                      @enderror
                 </div>
                 <div class="text-center">
                   <button type="submit" class="btn btn-primary">Submit</button>

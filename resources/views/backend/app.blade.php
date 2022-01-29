@@ -31,16 +31,12 @@
 
   <!-- include libraries(jQuery, bootstrap) -->
   <script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- include summernote css/js-->
-  <link href="{{asset('assets/vendor/summernote-develop/summernote-bs5.css')}}" rel="stylesheet">
+  <!-- include summernote -->
+<!-- include summernote css/js-->
+<link href="{{asset('assets/vendor/summernote-0.8.20/dist/summernote-bs4.css')}}" rel="stylesheet">
+<script src="{{asset('assets/vendor/summernote-0.8.20/dist/summernote-bs4.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
 
-
-  <!-- =======================================================
-  * Template Name: NiceAdmin - v2.2.0
-  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
 </head>
 
 <body>
@@ -83,16 +79,22 @@
   <script src="{{asset('assets/vendor/tinymce/tinymce.min.js')}}"></script>
   <script src="{{asset('assets/vendor/php-email-form/validate.js')}}"></script>
 
+  <!-- =======================================================
+  * Template Name: NiceAdmin - v2.2.0
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+
   <!-- Template Main JS File -->
   <script src="{{asset('assets/backend/js/main.js')}}"></script>
 
-  <script src="{{asset('assets/vendor/summernote-develop/summernote-bs5.js')}}"></script>
+  <script type="text/javascript">
+    
+    $(document).ready(function() {
+      $('#summernote').summernote();
+    });
+  </script>
 
-<script>
-  $(document).ready(function() {
-  //$('#summernote').summernote();
-  console.log('ok');
-  });
-</script>
 </body>
 </html>

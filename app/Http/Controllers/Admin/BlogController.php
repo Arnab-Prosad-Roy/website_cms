@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Session;
 use DB;
 use Illuminate\Support\Str;
-use  App\Helpers\AppHelper;
 
 
 class BlogController extends Controller
@@ -36,9 +35,8 @@ class BlogController extends Controller
     {
 
        
-         // $categories =  AppHelper::getCategory('blog');
-    
-          // $attachments =  AppHelper::getCategory('attachment-type')['categories'];
+        $categoryHead =  CategoryHead::where('slug', 'blog')->first();
+        $categories =  Category::where('category_head_id', $categoryHead->id)->get();
 
         return view('backend.blog.create',get_defined_vars());
     }
@@ -51,24 +49,17 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-
-         AppHelper::filterInputBeforeValidation($request);
-
-        // return $request->all();
-      
+        //dd($request->all());
+         //return $request->all();
         $this->validate($request, [
+            'category'=>'required',
             'title' => 'required|max:250',
             'slug' =>  'required|max:300|unique:blogs',
             'excerpt' => 'required|max:250',
             'description' => 'required',
-            'category'=>'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,svg,webp',
             'status' => 'required',
 
-            'image' => 'required|max:250',
-      
-            'attachment' => 'required_with:attachment_type|string|nullable|max:250',
-            'attachment_type' => 'required_with:attachment|string|nullable|max:250',
-            
             'authors' => 'nullable|max:250',
             'meta_title' => 'nullable|max:250',
             'meta_description' => 'nullable|max:250',
@@ -77,27 +68,50 @@ class BlogController extends Controller
             'og_meta_title' => 'nullable|max:250',
             'og_meta_description' => 'nullable|max:250',
             'og_meta_tags' => 'nullable|max:250',
-            'og_meta_image' => 'nullable|max:250',
+            'og_meta_image' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp',
         ]);
-    
-        AppHelper::filterInputAfterValidation($request);
-
+//dd($request->all());
         DB::beginTransaction();
 
         try{
 
             $blog = new Blog();
+            if($request->hasFile('image')){
 
-            $blog->admin_id = auth('admin')->user()->id;
+            //  if($siteSetting->site_footer_logo){
+            //     @unlink(public_path().'/'.$siteSetting->site_footer_logo);
+            // }
+
+                $originalImage = $request->file('image');
+                $imagePath = 'assets/images/blogs/';
+                $imageName = uniqid().time().'logo.'.$originalImage->getClientOriginalExtension();
+                $imageFullPath = $imagePath.$imageName;
+                $originalImage->move(public_path().'/'.$imagePath,$imageName);
+
+                $blog->image =  $imageFullPath;
+            }
+            if($request->hasFile('og_meta_image')){
+
+            //  if($siteSetting->site_footer_logo){
+            //     @unlink(public_path().'/'.$siteSetting->site_footer_logo);
+            // }
+
+                $originalImage = $request->file('og_meta_image');
+                $imagePath = 'assets/images/blogs/';
+                $imageName = uniqid().time().'logo.'.$originalImage->getClientOriginalExtension();
+                $imageFullPath = $imagePath.$imageName;
+                $originalImage->move(public_path().'/'.$imagePath,$imageName);
+
+                $blog->og_meta_image =  $imageFullPath;
+            }
+
+            // $blog->user_id = auth('web')->user()->id;
+            $blog->user_id = '1';
             $blog->category_id = $request->category;
             $blog->title = $request->title;
             $blog->slug = $request->slug;
             $blog->excerpt = $request->excerpt;
             $blog->description = $request->description;
-
-            $blog->image = $request->image;
-            $blog->attachment = $request->attachment;
-            $blog->attachment_type = $request->attachment_type;
 
             $blog->authors = $request->authors;
             $blog->meta_title	 = $request->meta_title	;
@@ -107,7 +121,6 @@ class BlogController extends Controller
             $blog->og_meta_title	 = $request->og_meta_title	;
             $blog->og_meta_description = $request->og_meta_description;
             $blog->og_meta_tags = $request->og_meta_tags;
-            $blog->og_meta_image = $request->og_meta_image;
 
             $blog->status = isset($request->status) ? $request->status : 1 ;
             $blog->save();
@@ -145,9 +158,8 @@ class BlogController extends Controller
     public function edit(Blog $blog)
     {
 
-       $categories =  AppHelper::getCategory('blog');
-    
-          $attachments =  AppHelper::getCategory('attachment-type')['categories'];
+        $categoryHead =  CategoryHead::where('slug', 'blog')->first();
+        $categories =  Category::where('category_head_id', $categoryHead->id)->get();
 
         return view('backend.blog.edit',get_defined_vars());
     }
@@ -162,53 +174,72 @@ class BlogController extends Controller
     public function update(Request $request, Blog $blog)
     {
 
-        AppHelper::filterInputBeforeValidation($request);
-
-        // return $request->all();
+         //return $blog;
         
-       $this->validate($request, [
-           'title' => 'required|max:250',
-           'slug' =>  'required|max:300|unique:blogs,slug,'.$blog->id,
-           'excerpt' => 'required|max:250',
-           'description' => 'required',
-           
-           'category'=>'required',
-           'status' => 'required',
+        $this->validate($request, [
+            'category'=>'required',
+            'title' => 'required|max:250',
+            'slug' =>  'required|max:300|unique:blogs,slug,'.$blog->id,
+            'excerpt' => 'required|max:250',
+            'description' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,svg,webp',
+            'status' => 'required',
 
-           'image' => 'required|max:250',
-     
-           'attachment' => 'required_with:attachment_type|string|nullable|max:250',
-           'attachment_type' => 'required_with:attachment|string|nullable|max:250',
-           
-           'authors' => 'nullable|max:250',
-           'meta_title' => 'nullable|max:250',
-           'meta_description' => 'nullable|max:250',
-           'meta_tags' => 'nullable|max:250',
+            'authors' => 'nullable|max:250',
+            'meta_title' => 'nullable|max:250',
+            'meta_description' => 'nullable|max:250',
+            'meta_tags' => 'nullable|max:250',
 
-           'og_meta_title' => 'nullable|max:250',
-           'og_meta_description' => 'nullable|max:250',
-           'og_meta_tags' => 'nullable|max:250',
-           'og_meta_image' => 'nullable|max:250',
-       ]);
+            'og_meta_title' => 'nullable|max:250',
+            'og_meta_description' => 'nullable|max:250',
+            'og_meta_tags' => 'nullable|max:250',
+            'og_meta_image' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp',
+        ]);
             // return $request->all();
 
-       AppHelper::filterInputAfterValidation($request);
+
 
             DB::beginTransaction();
 
             try{
-                
-                $blog->admin_id = auth('admin')->user()->id;
+                if($request->hasFile('image')){
+
+                 if($blog->image){
+                    @unlink(public_path().'/'.$blog->image);
+                }
+
+                    $originalImage = $request->file('image');
+                    $imagePath = 'assets/images/blogs/';
+                    $imageName = uniqid().time().'logo.'.$originalImage->getClientOriginalExtension();
+                    $imageFullPath = $imagePath.$imageName;
+                    $originalImage->move(public_path().'/'.$imagePath,$imageName);
+
+                    $blog->image =  $imageFullPath;
+                }
+                if($request->hasFile('og_meta_image')){
+
+                 if($blog->og_meta_image){
+                    @unlink(public_path().'/'.$blog->og_meta_image);
+                }
+
+                    $originalImage = $request->file('og_meta_image');
+                    $imagePath = 'assets/images/blogs/';
+                    $imageName = uniqid().time().'logo.'.$originalImage->getClientOriginalExtension();
+                    $imageFullPath = $imagePath.$imageName;
+                    $originalImage->move(public_path().'/'.$imagePath,$imageName);
+
+                    $blog->og_meta_image =  $imageFullPath;
+                }
+
+                //$blog->admin_id = auth('web')->user()->id;
+                $blog->user_id = '1';
                 $blog->category_id = $request->category;
                 $blog->title = $request->title;
                 $blog->slug = $request->slug;
                 $blog->excerpt = $request->excerpt;
                 $blog->description = $request->description;
     
-                $blog->image = $request->image;
-                $blog->attachment = $request->attachment;
-                $blog->attachment_type = $request->attachment_type;
-    
+
                 $blog->authors = $request->authors;
                 $blog->meta_title	 = $request->meta_title	;
                 $blog->meta_description = $request->meta_description;
@@ -217,7 +248,6 @@ class BlogController extends Controller
                 $blog->og_meta_title	 = $request->og_meta_title	;
                 $blog->og_meta_description = $request->og_meta_description;
                 $blog->og_meta_tags = $request->og_meta_tags;
-                $blog->og_meta_image = $request->og_meta_image;
     
                 $blog->status = isset($request->status) ? $request->status : 1 ;
                 $blog->save();
