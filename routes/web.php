@@ -58,7 +58,9 @@ Route::group(['namespace'=> 'Admin','as'=>'admin.','prefix'=>'admin'],function()
       Route::resource('question-answer','QuestionAnswerController');
       
       Route::resource('category','CategoryController');
-      route::get('category/{slug}/type','categorycontroller@index')->name('category.index');
+      Route::get('category/{slug}/type','categorycontroller@index')->name('category.index');
+      Route::get('category/{slug}/create','categorycontroller@create')->name('category.create');
+      Route::get('category/{id}/{slug}/edit','categorycontroller@edit')->name('category.edit');
 
       // Route::resource('post-type','PostTypeController');
       Route::resource('blog','BlogController'); 

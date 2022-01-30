@@ -22,10 +22,11 @@ class CategoryController extends Controller
     public function index($slug)
     {
         // return $slug;
-        
-          $categories =  AppHelper::getCategory($slug);
-          $categoryHead = CategoryHead::where('slug',$slug)->first();
-      return view('backend.category.index',get_defined_vars());
+      
+          $pageTitle =   ucfirst($slug).' Categories';
+          $categoryHead =  CategoryHead::where('slug', 'blog')->first();
+          $categories =  Category::where('category_head_id', $categoryHead->id)->get();
+          return view('backend.category.index',get_defined_vars());
     }
 
     /**
@@ -33,9 +34,11 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($slug)
     {
-        //
+        $pageTitle =   'Create '.ucfirst($slug).' Category';
+        $categoryHead = CategoryHead::where('slug',$slug)->first();
+        return view('backend.category.create',get_defined_vars());
     }
 
     /**
@@ -46,21 +49,23 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request->all());
         $this->validate($request, [
             'name' => 'required|max:250',
-            'slug' =>  'required|max:300|unique:blogs',
+            'slug' =>  'required|max:300|unique:categories',
             'status' => 'required',
 
         ]);
 
-
+// return $request->all();
         DB::beginTransaction();
 
         try{
 
             $category = new Category();
 
-            $category->admin_id = auth('admin')->user()->id;
+            //$category->user_id = auth('admin')->user()->id;
+            $category->user_id = '1';
             $category->category_head_id = $request->category_head_id;
             $category->name = $request->name;
             $category->slug = $request->slug;
@@ -71,13 +76,13 @@ class CategoryController extends Controller
             $status = true;
        
         }catch(\Exception  $e){
-            $message = $e->getMessage();
+           return $message = $e->getMessage();
             DB::rollback();
             $status = false;
             return back()->with('error','Please fill out form correctly...');
         }
         Session::flash('success','Information Saved Successfully..');
-        return \redirect()->route('admin.category.index');
+        return \redirect()->route('admin.category.index', $request->slug_url);
     }
 
     /**
@@ -97,9 +102,12 @@ class CategoryController extends Controller
      * @param  \App\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit($id,$slug)
     {
-        //
+        $category = Category::find($id);
+        $pageTitle =   'Edit '.ucfirst($slug).' Category';
+        $categoryHead = CategoryHead::where('slug',$slug)->first();
+        return view('backend.category.edit',get_defined_vars());
     }
 
     /**
@@ -111,7 +119,41 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+        // return $category;
+        // return $request->all();
+        $this->validate($request, [
+            'name' => 'required|max:250',
+            'slug' =>  'required|max:300|unique:categories,slug,'.$category->id,
+            'status' => 'required',
+
+        ]);
+
+// return $request->all();
+        DB::beginTransaction();
+
+        try{
+
+           
+
+            //$category->user_id = auth('admin')->user()->id;
+            $category->user_id = '1';
+            $category->category_head_id = $request->category_head_id;
+            $category->name = $request->name;
+            $category->slug = $request->slug;
+            $category->status = isset($request->status) ? $request->status : 1 ;
+            $category->save();
+            
+            DB::commit();
+            $status = true;
+       
+        }catch(\Exception  $e){
+            $message = $e->getMessage();
+            DB::rollback();
+            $status = false;
+            return back()->with('error','Please fill out form correctly...');
+        }
+        Session::flash('success','Information Saved Successfully..');
+        return \redirect()->route('admin.category.index',$request->slug_url);
     }
 
     /**
