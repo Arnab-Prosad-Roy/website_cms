@@ -64,4 +64,6 @@ Route::group(['namespace'=> 'Admin','as'=>'admin.','prefix'=>'admin'],function()
 
       // Route::resource('post-type','PostTypeController');
       Route::resource('blog','BlogController'); 
+      Route::resource('event','EventController');
+      Route::resource('achivement','AchievementController');  
 });

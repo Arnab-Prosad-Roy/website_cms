@@ -30,7 +30,6 @@ class CreateBlogsTable extends Migration
 
             $table->string('authors')->nullable();
           
-
             $table->string('meta_title')->nullable();
             $table->string('meta_description')->nullable();
             $table->string('meta_tags')->nullable();

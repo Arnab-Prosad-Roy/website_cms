@@ -17,13 +17,12 @@ class CreateEventsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('category_id')->nullable()->default(0);
-            $table->string('attachment_type')->nullable()->default('pdf');
+            
             $table->string('title');
             $table->string('slug',300)->unique()->nullable();
             $table->string('excerpt');
             $table->longText('description')->nullable();
             $table->string('image')->nullable();
-            $table->string('attachment')->nullable();
 
             $table->date('event_date')->nullable();
             $table->string('event_time')->nullable();
@@ -39,10 +38,16 @@ class CreateEventsTable extends Migration
 
             $table->tinyInteger('status')->default(1);
 
-            
+            $table->string('authors')->nullable();
+          
             $table->string('meta_title')->nullable();
             $table->string('meta_description')->nullable();
             $table->string('meta_tags')->nullable();
+
+            $table->string('og_meta_title')->nullable();
+            $table->string('og_meta_description')->nullable();
+            $table->string('og_meta_image')->nullable();
+            $table->string('og_meta_tags')->nullable();
 
             $table->foreign('user_id')
                         ->references('id')->on('users');

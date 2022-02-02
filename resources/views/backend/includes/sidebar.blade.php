@@ -57,6 +57,53 @@
         </ul>
       </li><!-- End Components Nav -->
 
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#events-nav" data-bs-toggle="collapse" href="#" aria-expanded="@if(request()->url() ==route('admin.blog.index') ) 
+                  true 
+                  @elseif(request()->url() == route('admin.event.create') ) 
+                  true 
+                  @elseif(url('admin/category/event/type/') == request()->url()) 
+                  true
+                  @elseif(url('admin/category/event/create/') == request()->url() ) 
+                  true 
+                  @else
+                  false
+                  @endif" >
+          <i class="bi bi-menu-button-wide"></i><span>Events</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="events-nav" class="nav-content collapse @if(request()->url() ==route('admin.event.index') ) 
+                  show 
+                  @elseif(request()->url() == route('admin.event.create') ) 
+                  show 
+                  @elseif(url('admin/category/event/type/') == request()->url()) 
+                  show
+                  @elseif(url('admin/category/event/create/') == request()->url() ) 
+                  show 
+                  @else
+                  @endif" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{route('admin.event.create')}}">
+              <i class="bi bi-circle"></i><span>Create Event</span>
+            </a>
+          </li>          
+          <li>
+            <a href="{{route('admin.event.index')}}">
+              <i class="bi bi-circle"></i><span>Manage Blogs</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{route('admin.category.index',['slug'=>'event'])}}">
+              <i class="bi bi-circle"></i><span>Manage Categories</span>
+            </a>
+          </li>          
+          <li>
+            <a href="{{route('admin.category.create',['slug'=>'event'])}}">
+              <i class="bi bi-circle"></i><span>Create Categories</span>
+            </a>
+          </li>
+
+        </ul>
+      </li><!-- End Components Nav -->
     </ul>
 
   </aside><!-- End Sidebar-->

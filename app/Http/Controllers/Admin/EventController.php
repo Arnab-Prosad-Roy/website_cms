@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 
 use App\Event;
+use App\CategoryHead;
+use App\Category;
 use Illuminate\Http\Request;
 use Session;
 use DB;
@@ -29,6 +31,8 @@ class EventController extends Controller
      */
     public function create()
     {
+        $categoryHead =  CategoryHead::where('slug', 'event')->first();
+        $categories =  Category::where('category_head_id', $categoryHead->id)->get();
         return view('backend.event.create',get_defined_vars());
     }
 
@@ -40,6 +44,7 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request->all());
         $this->validate($request, [
             'title' => 'required|max:250',
             'slug' =>  'nullable|max:300|unique:events',
@@ -48,6 +53,7 @@ class EventController extends Controller
             'event_date' => 'nullable|max:250',
             'event_time' => 'nullable|max:250',
             'event_venue' => 'nullable|max:250',
+            'excerpt' => 'nullable|max:250',
             'venue_location' => 'nullable|max:250',
             'organizer_name' => 'nullable|max:250',
             'organizer_email' => 'nullable|max:250',
@@ -56,14 +62,25 @@ class EventController extends Controller
             'meta_title' => 'nullable|max:250',
             'meta_description' => 'nullable|max:250',
             'meta_tags' => 'nullable|max:250',
-            'event_end' => 'required',
-            'status' => 'nullable',
+            'event_end' => 'nullable',
+            'status' => 'required',
+
+            'authors' => 'nullable|max:250',
+            'meta_title' => 'nullable|max:250',
+            'meta_description' => 'nullable|max:250',
+            'meta_tags' => 'nullable|max:250',
+
+            'og_meta_title' => 'nullable|max:250',
+            'og_meta_description' => 'nullable|max:250',
+            'og_meta_tags' => 'nullable|max:250',
+
             'image' => 'nullable|mimes:jpeg,png,jpg,svg,webp',
+            'og_meta_image' => 'nullable|mimes:jpeg,png,jpg,svg,webp',
         ]);
 
 
         DB::beginTransaction();
-
+        //dd($request->all());
         try{
             $event = new Event();
        
@@ -75,20 +92,22 @@ class EventController extends Controller
             $originalImage->move(public_path().'/'.$imagePath,$imageName);
             $event->image =  $imageFullPath;
         }
-        if($request->hasFile('attachment')){
-            $originalFile = $request->file('attachment');
-            $fileName = uniqid().time().'.'.$originalFile->getClientOriginalExtension();
-            $filePath = 'assets/files/events/';
-            $fileFullPath = $filePath.$fileName;
-            $originalFile->move(public_path().'/'.$filePath,$fileName);
-            $event->image =  $fileFullPath;
+        if($request->hasFile('og_meta_image')){
+            $originalImage = $request->file('og_meta_image');
+            $imageName = uniqid().time().'.'.$originalImage->getClientOriginalExtension();
+            $imagePath = 'assets/images/events/';
+            $imageFullPath = $imagePath.$imageName;
+            $originalImage->move(public_path().'/'.$imagePath,$imageName);
+            $event->image =  $imageFullPath;
         }
 
-        $event->admin_id = auth('admin')->user()->id;
+        //$event->admin_id = auth('admin')->user()->id;
+        $event->user_id = '1';
         $event->category_id = $request->category_id;
         $event->title = $request->title;
         $event->slug = $request->slug;
         $event->description = $request->description;
+        $event->excerpt = $request->excerpt;
 
 
         $event->event_date = $request->event_date;
@@ -116,6 +135,7 @@ class EventController extends Controller
        
         }catch(\Exception  $e){
             $message = $e->getMessage();
+            return $message;
             DB::rollback();
             $status = false;
             return back()->with('error','Please fill out form correctly...');
@@ -143,6 +163,8 @@ class EventController extends Controller
      */
     public function edit(Event $event)
     {
+        $categoryHead =  CategoryHead::where('slug', 'event')->first();
+        $categories =  Category::where('category_head_id', $categoryHead->id)->get();
         return view('backend.event.edit',get_defined_vars());
     }
 
@@ -157,12 +179,13 @@ class EventController extends Controller
     {
         $this->validate($request, [
             'title' => 'required|max:250',
-            'nullable|max:300|unique:events,slug,'.$event->id,
+            'slug' =>  'nullable|max:300|unique:events',
             'description' => 'nullable',
             'category_id'=>'required',
             'event_date' => 'nullable|max:250',
             'event_time' => 'nullable|max:250',
             'event_venue' => 'nullable|max:250',
+            'excerpt' => 'nullable|max:250',
             'venue_location' => 'nullable|max:250',
             'organizer_name' => 'nullable|max:250',
             'organizer_email' => 'nullable|max:250',
@@ -171,9 +194,20 @@ class EventController extends Controller
             'meta_title' => 'nullable|max:250',
             'meta_description' => 'nullable|max:250',
             'meta_tags' => 'nullable|max:250',
-            'event_end' => 'required',
-            'status' => 'nullable',
+            'event_end' => 'nullable',
+            'status' => 'required',
+
+            'authors' => 'nullable|max:250',
+            'meta_title' => 'nullable|max:250',
+            'meta_description' => 'nullable|max:250',
+            'meta_tags' => 'nullable|max:250',
+
+            'og_meta_title' => 'nullable|max:250',
+            'og_meta_description' => 'nullable|max:250',
+            'og_meta_tags' => 'nullable|max:250',
+
             'image' => 'nullable|mimes:jpeg,png,jpg,svg,webp',
+            'og_meta_image' => 'nullable|mimes:jpeg,png,jpg,svg,webp',
         ]);
 
 
@@ -191,23 +225,23 @@ class EventController extends Controller
             $originalImage->move(public_path().'/'.$imagePath,$imageName);
             $event->image =  $imageFullPath;
         }
-        if($request->hasFile('attachment')){
-            @unlink(public_path().'/'.$event->attachment);
-            $originalFile = $request->file('attachment');
-            $fileName = uniqid().time().'.'.$originalFile->getClientOriginalExtension();
-            $filePath = 'assets/files/events/';
-            $fileFullPath = $filePath.$fileName;
-            $originalFile->move(public_path().'/'.$filePath,$fileName);
-            $event->image =  $fileFullPath;
+        if($request->hasFile('og_meta_image')){
+            $originalImage = $request->file('og_meta_image');
+            $imageName = uniqid().time().'.'.$originalImage->getClientOriginalExtension();
+            $imagePath = 'assets/images/events/';
+            $imageFullPath = $imagePath.$imageName;
+            $originalImage->move(public_path().'/'.$imagePath,$imageName);
+            $event->image =  $imageFullPath;
         }
 
-        $event->admin_id = auth('admin')->user()->id;
+        //$event->admin_id = auth('admin')->user()->id;
+        $event->user_id = '1';
         $event->category_id = $request->category_id;
         $event->title = $request->title;
         $event->slug = $request->slug;
         $event->description = $request->description;
-
-
+        $event->excerpt = $request->excerpt;
+        
         $event->event_date = $request->event_date;
         $event->event_time = $request->event_time;
         $event->event_venue = $request->event_venue;
@@ -217,8 +251,6 @@ class EventController extends Controller
         $event->organizer_phone = $request->organizer_phone;
         $event->organizer_website = $request->organizer_website;
         $event->event_end = isset($request->event_end) ? $request->event_end : 1 ;
-  
-
    
         $event->meta_title	 = $request->meta_title	;
         $event->meta_description = $request->meta_description;
