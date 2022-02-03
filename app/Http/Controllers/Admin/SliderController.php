@@ -46,7 +46,7 @@ class SliderController extends Controller
             'status' => 'nullable',
             'image' => 'required|mimes:jpeg,png,jpg,svg,webp',
         ]);
-
+//dd($request->all());
 
         DB::beginTransaction();
 
@@ -63,7 +63,8 @@ class SliderController extends Controller
         }
       
 
-        $slider->admin_id = auth('admin')->user()->id;
+        //$slider->admin_id = auth('admin')->user()->id;
+        $slider->user_id = '1';
         $slider->title = $request->title;
         $slider->subtitle = $request->subtitle;
         $slider->btn_url = $request->btn_url;
@@ -139,7 +140,8 @@ class SliderController extends Controller
         }
       
 
-        $slider->admin_id = auth('admin')->user()->id;
+        //$slider->admin_id = auth('admin')->user()->id;
+        $slider->user_id = '1';
         $slider->title = $request->title;
         $slider->subtitle = $request->subtitle;
         $slider->btn_url = $request->btn_url;

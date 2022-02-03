@@ -62,7 +62,8 @@ class PartnerController extends Controller
         }
       
 
-        $partner->admin_id = auth('admin')->user()->id;
+        //$partner->admin_id = auth('admin')->user()->id;
+        $partner->user_id = '1';
         $partner->name = $request->name;
         $partner->site_url = $request->site_url;
         $partner->status = isset($request->status) ? $request->status : 1 ;
@@ -136,7 +137,8 @@ class PartnerController extends Controller
         }
       
 
-        $partner->admin_id = auth('admin')->user()->id;
+        //$partner->admin_id = auth('admin')->user()->id;
+        $partner->user_id = '1';
         $partner->name = $request->name;
         $partner->site_url = $request->site_url;
         $partner->status = isset($request->status) ? $request->status : 1 ;

@@ -63,7 +63,8 @@ class CertificationController extends Controller
         }
       
 
-        $certification->admin_id = auth('admin')->user()->id;
+        //$certification->admin_id = auth('admin')->user()->id;
+        $certification->user_id = '1';
         $certification->name = $request->name;
         $certification->issue_date = date('Y-m-d',strtotime( $request->issue_date));
         $certification->status = isset($request->status) ? $request->status : 1 ;
@@ -137,7 +138,8 @@ class CertificationController extends Controller
         }
       
 
-        $certification->admin_id = auth('admin')->user()->id;
+        //$certification->admin_id = auth('admin')->user()->id;
+        $certification->user_id = '1';
         $certification->name = $request->name;
         $certification->issue_date = date('Y-m-d',strtotime( $request->issue_date));
         $certification->status = isset($request->status) ? $request->status : 1 ;

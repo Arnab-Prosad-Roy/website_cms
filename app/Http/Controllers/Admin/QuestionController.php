@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 
 use App\Question;
+use App\CategoryHead;
+use App\Category;
 use Illuminate\Http\Request;
 use Session;
 use DB;
@@ -29,6 +31,8 @@ class QuestionController extends Controller
      */
     public function create()
     {
+        $categoryHead =  CategoryHead::where('slug', 'question')->first();
+        $categories =  Category::where('category_head_id', $categoryHead->id)->get();
         return view('backend.question.create',get_defined_vars());
     }
 
@@ -40,6 +44,7 @@ class QuestionController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request->all());
         $this->validate($request, [
             'question' => 'required|max:250',
             'answer' => 'required',
@@ -52,7 +57,8 @@ class QuestionController extends Controller
 
         try{
             $question = new Question();
-            $question->admin_id = auth('admin')->user()->id;
+            //$question->admin_id = auth('admin')->user()->id;
+            $question->user_id = '1';
             $question->category_id = $request->category_id;
             $question->question = $request->question;
             $question->answer = $request->answer;
@@ -91,6 +97,8 @@ class QuestionController extends Controller
      */
     public function edit(Question $question)
     {
+        $categoryHead =  CategoryHead::where('slug', 'blog')->first();
+        $categories =  Category::where('category_head_id', $categoryHead->id)->get();
         return view('backend.question.edit',get_defined_vars());
     }
 
@@ -115,7 +123,8 @@ class QuestionController extends Controller
 
         try{
          
-            $question->admin_id = auth('admin')->user()->id;
+            //$question->admin_id = auth('admin')->user()->id;
+            $question->user_id = '1';
             $question->category_id = $request->category_id;
             $question->question = $request->question;
             $question->answer = $request->answer;

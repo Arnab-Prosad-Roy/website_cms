@@ -47,7 +47,11 @@ class CategoryHeadSeeder extends Seeder
             'slug' => 'faq',
             'status' => 0,
         ]);
-       
+        DB::table('category_heads')->insert([
+            'name' => 'Question',
+            'slug' => 'question',
+            'status' => 0,
+        ]);
          // end of category head
     }
 }

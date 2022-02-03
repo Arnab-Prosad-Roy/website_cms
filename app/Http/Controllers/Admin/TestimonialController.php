@@ -40,6 +40,7 @@ class TestimonialController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request->all());
         $this->validate($request, [
             'name' => 'required|max:250',
             'designation' => 'required|max:250',
@@ -63,7 +64,8 @@ class TestimonialController extends Controller
         }
       
 
-        $testimonial->admin_id = auth('admin')->user()->id;
+        //$testimonial->admin_id = auth('admin')->user()->id;
+        $testimonial->user_id = '1';
         $testimonial->name = $request->name;
         $testimonial->designation = $request->designation;
         $testimonial->status = isset($request->status) ? $request->status : 1 ;
@@ -137,7 +139,8 @@ class TestimonialController extends Controller
         }
       
 
-        $testimonial->admin_id = auth('admin')->user()->id;
+        //$testimonial->admin_id = auth('admin')->user()->id;
+        $testimonial->user_id = '1';
         $testimonial->name = $request->name;
         $testimonial->designation = $request->designation;
         $testimonial->status = isset($request->status) ? $request->status : 1 ;

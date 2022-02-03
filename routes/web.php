@@ -66,4 +66,11 @@ Route::group(['namespace'=> 'Admin','as'=>'admin.','prefix'=>'admin'],function()
       Route::resource('blog','BlogController'); 
       Route::resource('event','EventController');
       Route::resource('achivement','AchievementController');  
+      Route::resource('member','MemberController');
+      Route::resource('question','QuestionController');
+      Route::resource('testimonial','TestimonialController');
+      Route::resource('certification','CertificationController');
+      Route::resource('clients','ClientController');
+      Route::resource('partner','PartnerController');
+      Route::resource('slider','SliderController');
 });

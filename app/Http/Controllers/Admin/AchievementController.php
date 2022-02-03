@@ -1,8 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
 
 use App\Achievement;
+use App\CategoryHead;
+use App\Category;
 use Illuminate\Http\Request;
 use Session;
 use DB;
@@ -16,6 +20,7 @@ class AchievementController extends Controller
      */
     public function index()
     {
+
         $achievements = Achievement::get();
         return view('backend.achievement.index',get_defined_vars());
     }
@@ -27,6 +32,9 @@ class AchievementController extends Controller
      */
     public function create()
     {
+
+        $categoryHead =  CategoryHead::where('slug', 'Achievement')->first();
+        $categories =  Category::where('category_head_id', $categoryHead->id)->get();
         return view('backend.achievement.create',get_defined_vars());
     }
 
@@ -38,6 +46,7 @@ class AchievementController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request->all());
         $this->validate($request, [
             'title' => 'required|max:250',
             'award_name' => 'required|max:250',
@@ -63,7 +72,8 @@ class AchievementController extends Controller
         }
       
 
-        $achievement->admin_id = auth('admin')->user()->id;
+        //$achievement->admin_id = auth('admin')->user()->id;
+        $achievement->user_id = '1';
         $achievement->category_id = $request->category_id;
         $achievement->title = $request->title;
         $achievement->award_name = $request->award_name;
@@ -103,6 +113,8 @@ class AchievementController extends Controller
      */
     public function edit(Achievement $achievement)
     {
+        $categoryHead =  CategoryHead::where('slug', 'blog')->first();
+        $categories =  Category::where('category_head_id', $categoryHead->id)->get();
         return view('backend.achievement.edit',get_defined_vars());
     }
 

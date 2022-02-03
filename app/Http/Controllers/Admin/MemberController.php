@@ -40,6 +40,7 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request->all());
         $this->validate($request, [
             'name' => 'required|max:250',
             'designation' => 'required|max:250',
@@ -47,7 +48,7 @@ class MemberController extends Controller
             'image' => 'nullable|mimes:jpeg,png,jpg,svg,webp',
         ]);
 
-
+        //dd($request->all());
         DB::beginTransaction();
 
         try{
@@ -63,7 +64,8 @@ class MemberController extends Controller
         }
       
 
-        $member->admin_id = auth('admin')->user()->id;
+        //$member->admin_id = auth('admin')->user()->id;
+        $member->user_id = '1';
         $member->name = $request->name;
         $member->designation = $request->designation;
         $member->status = isset($request->status) ? $request->status : 1 ;
@@ -74,6 +76,7 @@ class MemberController extends Controller
        
         }catch(\Exception  $e){
             $message = $e->getMessage();
+            return $message;
             DB::rollback();
             $status = false;
             return back()->with('error','Please fill out form correctly...');
@@ -113,6 +116,7 @@ class MemberController extends Controller
      */
     public function update(Request $request, Member $member)
     {
+        //dd($request->all());
         $this->validate($request, [
             'name' => 'required|max:250',
             'designation' => 'required|max:250',
@@ -137,7 +141,8 @@ class MemberController extends Controller
         }
       
 
-        $member->admin_id = auth('admin')->user()->id;
+        //$member->admin_id = auth('admin')->user()->id;
+        $member->user_id = '1';
         $member->name = $request->name;
         $member->designation = $request->designation;
         $member->status = isset($request->status) ? $request->status : 1 ;

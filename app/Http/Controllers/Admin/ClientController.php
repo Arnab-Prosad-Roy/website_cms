@@ -18,7 +18,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        $client = Client::get();
+        $clients = Client::get();
         return view('backend.client.index',get_defined_vars());
     }
 
@@ -63,7 +63,8 @@ class ClientController extends Controller
         }
       
 
-        $client->admin_id = auth('admin')->user()->id;
+        //$client->admin_id = auth('admin')->user()->id;
+        $client->user_id = '1';
         $client->name = $request->name;
         $client->site_url = $request->site_url;
         $client->status = isset($request->status) ? $request->status : 1 ;
@@ -79,7 +80,7 @@ class ClientController extends Controller
             return back()->with('error','Please fill out form correctly...');
         }
         Session::flash('success','Information Saved Successfully..');
-        return \redirect()->route('admin.client.index');
+        return \redirect()->route('admin.clients.index');
     }
 
     /**
@@ -137,7 +138,8 @@ class ClientController extends Controller
         }
       
 
-        $client->admin_id = auth('admin')->user()->id;
+        //$client->admin_id = auth('admin')->user()->id;
+        $client->user_id = '1';
         $client->name = $request->name;
         $client->site_url = $request->site_url;
         $client->status = isset($request->status) ? $request->status : 1 ;
@@ -153,7 +155,7 @@ class ClientController extends Controller
             return back()->with('error','Please fill out form correctly...');
         }
         Session::flash('success','Information Upated Successfully..');
-        return \redirect()->route('admin.client.index');
+        return \redirect()->route('admin.clients.index');
     }
 
     /**
